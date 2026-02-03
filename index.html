@@ -4,124 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Be My Valentine?</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root {
-            --primary-pink: #ffafbd;
-            --secondary-pink: #ffc3a0;
-            --glass-bg: rgba(255, 255, 255, 0.2);
-            --text-color: #4a4a4a;
-        }
-
         body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, var(--primary-pink), var(--secondary-pink));
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
+            margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden;
         }
-
-        .container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 3rem;
-            border-radius: 20px;
-            text-align: center;
+        .card {
+            background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(12px);
+            padding: 3rem; border-radius: 25px; text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3); width: 350px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            position: relative;
+            transition: all 0.5s ease;
         }
-
-        h1 { color: #d63384; font-size: 2.5rem; margin-bottom: 1rem; }
-        p { color: var(--text-color); font-size: 1.1rem; }
-
-        .btn-group {
-            margin-top: 2rem;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        button {
-            padding: 12px 25px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
+        h1 { color: #d63384; margin-bottom: 10px; }
+        p { color: #555; line-height: 1.6; }
+        .buttons { margin-top: 30px; position: relative; height: 50px; }
+        button { 
+            padding: 12px 25px; border: none; border-radius: 50px; 
+            cursor: pointer; font-weight: bold; font-size: 1rem;
             transition: transform 0.2s;
-            font-weight: bold;
         }
-
-        .btn-yes { background: #ff4d6d; color: white; box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4); }
-        .btn-yes:hover { transform: scale(1.1); }
-
-        .btn-no { background: #fff; color: #ff4d6d; position: relative; }
-
-        /* Floating Hearts Animation */
-        .heart {
-            position: absolute;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 20px;
-            animation: float 5s infinite ease-in;
-            z-index: -1;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
-        }
+        .yes { background: #ff4d6d; color: white; box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4); }
+        .no { background: white; color: #ff4d6d; position: absolute; left: 180px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="main-content">
-            <h1>Will you be my Valentine? 🌹</h1>
-            <p>I promise it'll be better than a Netflix subscription.</p>
-            <div class="btn-group">
-                <button class="btn-yes" onclick="celebrate()">Yes!</button>
-                <button class="btn-no" id="noButton" onmouseover="moveButton()">No</button>
-            </div>
+    <div class="card" id="card">
+        <h1>Will you be my Valentine? ❤️</h1>
+        <p>I have a special question for you...</p>
+        <div class="buttons">
+            <button class="yes" onclick="showLove()">Yes!</button>
+            <button class="no" id="noBtn" onmouseover="moveButton()">No</button>
         </div>
     </div>
 
     <script>
-        // The "Moving No" logic
+        // The "Moving No" Logic
         function moveButton() {
-            const btn = document.getElementById('noButton');
+            const btn = document.getElementById('noBtn');
             const x = Math.random() * (window.innerWidth - btn.offsetWidth);
             const y = Math.random() * (window.innerHeight - btn.offsetHeight);
-            
-            btn.style.position = 'absolute';
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
         }
 
-        // The Success logic
-        function celebrate() {
-            const content = document.getElementById('main-content');
-            content.innerHTML = `
-                <h1>Yay! See you on the 14th! ❤️</h1>
-                <p>Prepare for the best date ever.</p>
-                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHYyNHp6bXF6ZzR6ZzR6ZzR6ZzR6ZzR6ZzR6ZzR6ZzR6ZzR6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/KZT3kj1U38Y7K/giphy.gif" width="100%" style="border-radius: 10px; margin-top: 15px;">
+        // The Success Logic (Option 3 + Confetti)
+        function showLove() {
+            // Trigger Confetti
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffafbd', '#ffffff', '#ffc3a0']
+            });
+
+            // Update Card Content
+            const card = document.getElementById('card');
+            card.innerHTML = `
+                <h1 style="font-size: 2rem;">It's a Date! ❤️</h1>
+                <p style="font-style: italic; white-space: pre-line;">
+                    I wrote some code, I picked a theme,
+                    To ask the person of my dreams.
+                    The screen is glass, the pixels new,
+                    But my love is real and it’s all for you.
+                </p>
+                <div style="font-size: 40px; margin-top: 20px;">🎉🌹✨</div>
             `;
         }
-
-        // Create background hearts
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = '❤️';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 5000);
-        }
-        setInterval(createHeart, 300);
     </script>
 </body>
 </html>
