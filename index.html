@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Be My Valentine? ❤️</title>
-    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -12,7 +11,7 @@
             --primary-pink: #ffafbd;
             --secondary-pink: #ffc3a0;
             --accent-red: #ff4d6d;
-            --glass: rgba(255, 255, 255, 0.25);
+            --glass: rgba(255, 255, 255, 0.8);
         }
 
         body {
@@ -22,79 +21,74 @@
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, var(--primary-pink), var(--secondary-pink));
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             overflow: hidden;
             touch-action: manipulation;
         }
 
         .card {
             background: var(--glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            padding: 2rem;
             border-radius: 30px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 2px solid white;
             width: 85%;
-            max-width: 400px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            z-index: 10;
+            max-width: 350px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 100; /* Keeps card above hearts */
         }
 
-        h1 { color: #d63384; font-size: 2rem; margin-bottom: 10px; }
-        p { color: #4a4a4a; line-height: 1.6; font-size: 1.1rem; }
-
+        h1 { color: #d63384; font-size: 1.8rem; }
+        
         .buttons {
-            margin-top: 40px;
+            margin-top: 30px;
             display: flex;
             justify-content: center;
-            gap: 20px;
-            height: 50px;
+            gap: 15px;
+            min-height: 50px;
         }
 
         button {
-            padding: 12px 30px;
+            padding: 12px 25px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1rem;
-            transition: transform 0.2s;
+            transition: 0.3s;
         }
 
-        .yes {
-            background: var(--accent-red);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
-        }
+        .yes { background: var(--accent-red); color: white; }
 
         .no {
             background: white;
             color: var(--accent-red);
-            border: 1px solid rgba(255, 77, 109, 0.2);
-            position: absolute; /* Changed to absolute for easier jumping */
-            transition: 0.1s; /* Faster jump */
+            border: 1px solid var(--accent-red);
+            position: relative; /* Starts in the box */
         }
 
         .floating-heart {
             position: absolute;
+            bottom: -50px;
             font-size: 20px;
-            color: rgba(255, 255, 255, 0.5);
-            animation: float 6s linear infinite;
-            z-index: 1;
+            opacity: 0.6;
+            animation: float Up 6s linear infinite;
+            z-index: 1; /* Behind the card */
+            pointer-events: none;
         }
 
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="card" id="card">
+    <div class="card" id="mainCard">
         <div id="content">
-            <h1>Will you be my Valentine? ❤️</h1>
+            <h1>Will you be my Valentine, Vrusha? ❤️</h1>
             <p>I have a very important question for you...</p>
             <div class="buttons">
                 <button class="yes" onclick="showLove()">Yes!</button>
@@ -104,57 +98,44 @@
     </div>
 
     <script>
-        // Floating hearts logic
         function createHearts() {
             const heart = document.createElement('div');
             heart.classList.add('floating-heart');
             heart.innerHTML = '❤️';
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
             document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 6000);
+            setTimeout(() => heart.remove(), 5000);
         }
-        setInterval(createHearts, 400);
+        setInterval(createHearts, 500);
 
-        // The "No" button jump logic
         function moveButton() {
             const btn = document.getElementById('noBtn');
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
             
+            btn.style.position = 'fixed';
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
         }
 
-        // The "No Choice" Trap Logic
         function trap() {
-            alert("⚠️ SYSTEM ERROR: You can't have a choice! 'No' is not a valid option for Vrusha. ❤️");
+            alert("⚠️ SYSTEM ERROR: 'No' is not an option for my wife! Choice denied. ❤️");
             moveButton();
         }
 
-        // The Celebration
         function showLove() {
-            const duration = 3 * 1000;
-            const end = Date.now() + duration;
-
-            (function frame() {
-              confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4d6d', '#ffffff'] });
-              confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4d6d', '#ffffff'] });
-              if (Date.now() < end) requestAnimationFrame(frame);
-            }());
-
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            
             document.getElementById('content').innerHTML = `
-                <h1 style="font-size: 2.2rem;">It's a Date! "Vrusha ❤️" </h1>
-                <p style="font-style: italic; white-space: pre-line; margin-top: 20px;">
-                    I wrote some code, I picked a theme,
-                    To ask the person of my dreams.
-                    The screen is glass, the pixels new,
-                    But my love is real and it’s all for you.
-
-                    "To my beautiful wife: You are the heart of our home and the soul of my life. 
-                    Thank you for choosing me every single day. Happy Valentine’s Day."
+                <h1 style="font-size: 2rem;">It's a Date! ❤️</h1>
+                <p style="font-style: italic; white-space: pre-line;">
+                    To my beautiful wife Vrusha: 
+                    You are the heart of our home.
+                    Thank you for choosing me every day.
+                    Happy Valentine’s Day!
                 </p>
-                <div style="font-size: 50px; margin-top: 20px;">🎉✨🌹</div>
+                <div style="font-size: 40px;">🌹✨💍</div>
             `;
         }
     </script>
