@@ -1,5 +1,110 @@
-<script>
-        // Create background hearts
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Be My Valentine? ❤️</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary-pink: #ffafbd;
+            --secondary-pink: #ffc3a0;
+            --accent-red: #ff4d6d;
+            --glass: rgba(255, 255, 255, 0.25);
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-pink), var(--secondary-pink));
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 2.5rem;
+            border-radius: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            width: 85%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        h1 { color: #d63384; font-size: 2rem; margin-bottom: 10px; }
+        p { color: #4a4a4a; line-height: 1.6; font-size: 1.1rem; }
+
+        .buttons {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            height: 50px;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .yes {
+            background: var(--accent-red);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        .no {
+            background: white;
+            color: var(--accent-red);
+            border: 1px solid rgba(255, 77, 109, 0.2);
+            position: absolute; /* Changed to absolute for easier jumping */
+            transition: 0.1s; /* Faster jump */
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            animation: float 6s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="card">
+        <div id="content">
+            <h1>Will you be my Valentine? ❤️</h1>
+            <p>I have a very important question for you...</p>
+            <div class="buttons">
+                <button class="yes" onclick="showLove()">Yes!</button>
+                <button class="no" id="noBtn" onmouseover="moveButton()" onclick="trap()">No</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Floating hearts logic
         function createHearts() {
             const heart = document.createElement('div');
             heart.classList.add('floating-heart');
@@ -11,35 +116,21 @@
         }
         setInterval(createHearts, 400);
 
-        // Mobile-ready Move Logic + The "No Choice" Alert
-        let noClickCount = 0;
-
+        // The "No" button jump logic
         function moveButton() {
             const btn = document.getElementById('noBtn');
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
             
-            // Calculate random position
-            const padding = 50;
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth - padding);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight - padding);
-            
-            btn.style.position = 'fixed';
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
-
-            // Optional: Show a small toast or change text as it moves
-            if(noClickCount < 1) {
-                console.log("Choice restricted!"); 
-            }
         }
 
-        // The "Trap" Message logic
-        document.getElementById('noBtn').onclick = function() {
-            noClickCount++;
-            if(noClickCount > 0) {
-                alert("⛔ SYSTEM ERROR: You can't have a choice! 'No' is currently disabled for Vrusha. ❤️");
-                moveButton(); // Make it jump again after they click 'OK' on the alert
-            }
-        };
+        // The "No Choice" Trap Logic
+        function trap() {
+            alert("⚠️ SYSTEM ERROR: You can't have a choice! 'No' is not a valid option for Vrusha. ❤️");
+            moveButton();
+        }
 
         // The Celebration
         function showLove() {
@@ -47,28 +138,12 @@
             const end = Date.now() + duration;
 
             (function frame() {
-              confetti({
-                particleCount: 3,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-                colors: ['#ff4d6d', '#ffffff']
-              });
-              confetti({
-                particleCount: 3,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-                colors: ['#ff4d6d', '#ffffff']
-              });
-
-              if (Date.now() < end) {
-                requestAnimationFrame(frame);
-              }
+              confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4d6d', '#ffffff'] });
+              confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4d6d', '#ffffff'] });
+              if (Date.now() < end) requestAnimationFrame(frame);
             }());
 
-            const cardContent = document.getElementById('content');
-            cardContent.innerHTML = `
+            document.getElementById('content').innerHTML = `
                 <h1 style="font-size: 2.2rem;">It's a Date! "Vrusha ❤️" </h1>
                 <p style="font-style: italic; white-space: pre-line; margin-top: 20px;">
                     I wrote some code, I picked a theme,
@@ -83,3 +158,5 @@
             `;
         }
     </script>
+</body>
+</html>
